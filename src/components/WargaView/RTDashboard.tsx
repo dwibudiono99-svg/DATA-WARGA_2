@@ -23,6 +23,7 @@ import {
   MessageCircle,
   FileSpreadsheet,
   Database,
+  Cloud,
 } from 'lucide-react';
 import { KopDanLogoRT } from '../KopDanLogoRT';
 import { WebHostingBanner } from '../WebHostingBanner';
@@ -209,6 +210,37 @@ export const RTDashboard: React.FC<RTDashboardProps> = ({
 
         {/* Background glow */}
         <div className="absolute -bottom-10 right-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+      </div>
+
+      {/* Quick Database Backup & Cloud Drive Shortcut Ribbon */}
+      <div className="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 rounded-2xl p-4 border border-blue-700/40 shadow-sm text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-blue-500/20 rounded-xl border border-blue-400/30 text-blue-300 shrink-0">
+            <Cloud className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="font-extrabold text-sm text-white">
+                Fasilitas Cadangan & Pemulihan (Komputer & Google Drive)
+              </h4>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30">
+                Lokal & Cloud
+              </span>
+            </div>
+            <p className="text-xs text-slate-300">
+              Amankan database warga, iuran kas, dan arsip surat pengantar RT langsung ke komputer atau akun Google Drive Anda.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onNavigateTab('pelaporan')}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-colors shrink-0 shadow-md shadow-blue-900/40 cursor-pointer"
+        >
+          <Database className="w-3.5 h-3.5" />
+          <span>Buka Fasilitas Backup & Restore &rarr;</span>
+        </button>
       </div>
 
       {/* Action alerts: Pending Surat & Iuran Verifications */}

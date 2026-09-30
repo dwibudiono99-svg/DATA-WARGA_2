@@ -108,6 +108,7 @@ interface RBACContextType {
   // Real-time synchronization & Backup
   isRealtimeActive: boolean;
   lastSyncTimestamp: string;
+  getFullBackupData: () => any;
   exportFullBackupJSON: () => void;
   importFullBackupJSON: (backupObj: any, mode: 'replace' | 'merge') => boolean;
 
@@ -881,8 +882,8 @@ export const RBACProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
-  const exportFullBackupJSON = () => {
-    const backupData = {
+  const getFullBackupData = () => {
+    return {
       appName: 'SIM-Warga Portal Terpadu RT 04',
       systemVersion: '2.5',
       exportTimestamp: new Date().toISOString(),
@@ -903,6 +904,10 @@ export const RBACProvider: React.FC<{ children: React.ReactNode }> = ({ children
       rolePermissions,
       auditLogs,
     };
+  };
+
+  const exportFullBackupJSON = () => {
+    const backupData = getFullBackupData();
 
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backupData, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -914,7 +919,7 @@ export const RBACProvider: React.FC<{ children: React.ReactNode }> = ({ children
     downloadAnchor.click();
     downloadAnchor.remove();
 
-    logAudit('SYSTEM_BACKUP_EXPORT', 'Audit & Sistem', 'success', 'Mengunduh cadangan lengkap (backup full snapshot JSON).');
+    logAudit('SYSTEM_BACKUP_EXPORT', 'Audit & Sistem', 'success', 'Mengunduh cadangan lengkap ke komputer lokal (backup snapshot JSON).');
   };
 
   const importFullBackupJSON = (backupObj: any, mode: 'replace' | 'merge'): boolean => {
@@ -1107,6 +1112,7 @@ export const RBACProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetPermissionsToDefault,
         isRealtimeActive,
         lastSyncTimestamp,
+        getFullBackupData,
         exportFullBackupJSON,
         importFullBackupJSON,
         logAudit,

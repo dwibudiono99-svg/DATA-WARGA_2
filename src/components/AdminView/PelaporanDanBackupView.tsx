@@ -31,6 +31,7 @@ import {
 import { KopDanLogoRT } from '../KopDanLogoRT';
 import { EditKopRTModal } from '../EditKopRTModal';
 import { BlokRumah } from '../../types/rbac';
+import { GoogleDriveBackupPanel } from './GoogleDriveBackupPanel';
 
 export const PelaporanDanBackupView: React.FC = () => {
   const {
@@ -869,6 +870,9 @@ export const PelaporanDanBackupView: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Cloud Google Drive Backup & Restore Component */}
+          <GoogleDriveBackupPanel />
         </div>
       )}
 
