@@ -21,6 +21,7 @@ import {
   QrCode,
   ShieldCheck,
   FileSpreadsheet,
+  Mail,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -29,6 +30,7 @@ interface NavbarProps {
   onOpenAuthModal: () => void;
   onOpenScanKK: () => void;
   onOpenWebHosting?: () => void;
+  onOpenKirimEmail?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -37,6 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuthModal,
   onOpenScanKK,
   onOpenWebHosting,
+  onOpenKirimEmail,
 }) => {
   const {
     currentUser,
@@ -179,17 +182,30 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right Header: Notification & Profile */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Web Hosting Portal Quick Access */}
             {onOpenWebHosting && (
               <button
                 type="button"
                 onClick={onOpenWebHosting}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-bold text-xs shadow-2xs transition-all cursor-pointer"
+                className="btn-3d btn-3d-indigo text-xs px-3 py-1.5"
                 title="Lihat Alamat Web Hosting & QR Code Akses Warga"
               >
-                <Globe className="w-3.5 h-3.5 text-indigo-600" />
+                <Globe className="w-3.5 h-3.5 mr-1.5" />
                 <span className="hidden lg:inline">Alamat Web & QR</span>
+              </button>
+            )}
+
+            {/* Kirim Gmail Button for Admin */}
+            {isAdmin && onOpenKirimEmail && (
+              <button
+                type="button"
+                onClick={onOpenKirimEmail}
+                className="btn-3d btn-3d-rose text-xs px-3 py-1.5"
+                title="Kirim Pesan / Pengumuman via Gmail"
+              >
+                <Mail className="w-3.5 h-3.5 mr-1.5" />
+                <span className="hidden xl:inline">Kirim Gmail</span>
               </button>
             )}
 
@@ -197,10 +213,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={onOpenScanKK}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-xs shadow-xs transition-all hover:scale-102 cursor-pointer"
+              className="btn-3d btn-3d-emerald text-xs px-3 py-1.5"
               title="Pindai / Scan Foto Kartu Keluarga dengan AI"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" />
+              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-amber-200" />
               <span className="hidden sm:inline">Scan KK (AI)</span>
             </button>
 

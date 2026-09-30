@@ -416,31 +416,31 @@ export const DataWargaManagement: React.FC<DataWargaManagementProps> = ({ onOpen
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2 self-start md:self-auto">
+        <div className="flex flex-wrap gap-2.5 self-start md:self-auto">
           {onOpenScanKK && (
             <button
               onClick={onOpenScanKK}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white rounded-xl font-bold text-xs transition-all shadow-xs hover:scale-102 cursor-pointer"
+              className="btn-3d btn-3d-emerald text-xs px-3.5 py-2"
             >
-              <Sparkles className="w-4 h-4 text-amber-300 animate-spin" />
+              <Sparkles className="w-4 h-4 mr-1.5 text-amber-200" />
               <span>Scan KK (AI)</span>
             </button>
           )}
 
           <button
             onClick={handleExportJson}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition-colors cursor-pointer"
+            className="btn-3d btn-3d-white text-xs px-3.5 py-2"
             title="Ekspor seluruh data warga ke format JSON"
           >
-            <Download className="w-4 h-4 text-slate-500" />
+            <Download className="w-4 h-4 text-slate-500 mr-1.5" />
             <span>Ekspor JSON</span>
           </button>
 
           <button
             onClick={handleOpenAddModal}
-            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs transition-all shadow-md shadow-indigo-600/20 hover:scale-102 cursor-pointer"
+            className="btn-3d btn-3d-indigo text-xs px-4 py-2"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 mr-1.5" />
             <span>Tambah KK Warga</span>
           </button>
         </div>

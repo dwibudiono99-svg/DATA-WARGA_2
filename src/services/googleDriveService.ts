@@ -22,7 +22,8 @@ export interface GoogleDriveFileItem {
   description?: string;
 }
 
-const DRIVE_FILE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FILE_SCOPE =
+  'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly';
 const TOKEN_STORAGE_KEY = 'sim_warga_gdrive_access_token';
 const TOKEN_EXPIRY_KEY = 'sim_warga_gdrive_token_expiry';
 

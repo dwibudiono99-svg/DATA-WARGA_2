@@ -74,14 +74,12 @@ export const RoleGuardBanner: React.FC = () => {
           <button
             type="button"
             onClick={handleToggle}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold text-xs transition-all shadow-xs ${
-              isAdmin
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                : 'bg-indigo-600 hover:bg-indigo-500 text-white'
+            className={`btn-3d text-xs px-3 py-1.5 ${
+              isAdmin ? 'btn-3d-emerald' : 'btn-3d-indigo'
             }`}
             title="Klik untuk beralih mode akses Pengurus RT dan Warga"
           >
-            <RefreshCw className="w-3 h-3" />
+            <RefreshCw className="w-3 h-3 mr-1.5" />
             <span>Ganti ke Mode {isAdmin ? 'Warga Penghuni' : 'Pengurus RT'}</span>
           </button>
         </div>

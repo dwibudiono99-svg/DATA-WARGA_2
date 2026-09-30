@@ -87,23 +87,23 @@ export const WargaDashboard: React.FC<WargaDashboardProps> = ({
           <div className="flex flex-wrap sm:flex-nowrap gap-3 shrink-0">
             <button
               onClick={onOpenScanKK}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-emerald-600 hover:from-amber-400 hover:to-emerald-500 text-slate-950 rounded-2xl font-black text-xs transition-all shadow-md shadow-amber-500/20 hover:scale-102 cursor-pointer"
+              className="btn-3d btn-3d-amber text-xs px-4 py-2.5 text-slate-950"
             >
-              <Sparkles className="w-4 h-4 text-slate-950 animate-spin" />
+              <Sparkles className="w-4 h-4 mr-1.5 text-slate-950" />
               <span>Pindai KK Saya (AI)</span>
             </button>
             <button
               onClick={() => onNavigateTab('ajukan-surat')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-semibold text-xs transition-all shadow-md shadow-emerald-600/30 hover:scale-102"
+              className="btn-3d btn-3d-emerald text-xs px-4 py-2.5"
             >
-              <FileCheck2 className="w-4 h-4" />
+              <FileCheck2 className="w-4 h-4 mr-1.5" />
               <span>Ajukan Surat Pengantar</span>
             </button>
             <button
               onClick={() => onNavigateTab('keamanan')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-slate-900/80 hover:bg-slate-900 text-emerald-300 border border-emerald-500/40 rounded-2xl font-semibold text-xs transition-all hover:scale-102"
+              className="btn-3d btn-3d-dark text-xs px-4 py-2.5"
             >
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 mr-1.5 text-emerald-400" />
               <span>Kontak Keamanan</span>
             </button>
           </div>

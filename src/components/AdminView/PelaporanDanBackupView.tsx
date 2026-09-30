@@ -27,6 +27,8 @@ import {
   Database,
   Lock,
   Unlock,
+  Table,
+  Cloud,
 } from 'lucide-react';
 import { KopDanLogoRT } from '../KopDanLogoRT';
 import { EditKopRTModal } from '../EditKopRTModal';
@@ -671,6 +673,40 @@ export const PelaporanDanBackupView: React.FC = () => {
                 >
                   <Printer className="w-4 h-4 text-indigo-700" />
                   <span>Buka Format Laporan Resmi RT</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 7. Sinkronisasi & Integrasi Google Sheets Langsung */}
+            <div className="bg-gradient-to-br from-emerald-900 to-teal-950 text-white rounded-3xl p-5 shadow-xl flex flex-col justify-between space-y-4 border border-emerald-700/60">
+              <div className="space-y-2">
+                <div className="w-10 h-10 rounded-xl bg-white/10 text-emerald-300 flex items-center justify-center border border-white/20">
+                  <Table className="w-5 h-5 text-emerald-300" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-extrabold text-base text-white">
+                    Google Sheets Cloud Sync
+                  </h4>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 text-[10px] font-bold border border-emerald-400/40">
+                    Online
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Buat dan ekspor seluruh spreadsheet Google Sheets (Warga, Iuran Kas, Register Surat) langsung ke akun Google Drive Anda.
+                </p>
+                <div className="text-[11px] text-emerald-300 font-semibold pt-1">
+                  Integrasi Google Sheets API v4
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2 border-t border-emerald-800/60">
+                <button
+                  type="button"
+                  onClick={() => setActiveSubTab('backup')}
+                  className="w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                >
+                  <Cloud className="w-4 h-4" />
+                  <span>Buka Panel Google Sheets &rarr;</span>
                 </button>
               </div>
             </div>

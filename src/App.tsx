@@ -11,6 +11,7 @@ import { AccessDeniedModal } from './components/AccessDeniedModal';
 import { AuthModal } from './components/AuthModal';
 import { ScanKKModal } from './components/ScanKKModal';
 import { WebHostingPosterModal } from './components/WebHostingPosterModal';
+import { KirimEmailGmailModal } from './components/KirimEmailGmailModal';
 
 // Admin / Pengurus RT Views
 import { RTDashboard } from './components/WargaView/RTDashboard';
@@ -39,6 +40,7 @@ function AppContent() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isScanKKOpen, setIsScanKKOpen] = useState(false);
   const [isPosterModalOpen, setIsPosterModalOpen] = useState(false);
+  const [isGmailModalOpen, setIsGmailModalOpen] = useState(false);
   const [copiedFooter, setCopiedFooter] = useState(false);
 
   const defaultHostingUrl =
@@ -78,21 +80,30 @@ function AppContent() {
   }, [isAdmin]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+    <div className="min-h-screen flex flex-col bg-modern-grid text-slate-800 relative selection:bg-indigo-500 selection:text-white">
+      {/* Dynamic Ambient Background Glow Elements */}
+      <div className="bg-ambient-orb-1" aria-hidden="true" />
+      <div className="bg-ambient-orb-2" aria-hidden="true" />
+
       {/* Dynamic Role & Location Banner */}
-      <RoleGuardBanner />
+      <div className="relative z-10">
+        <RoleGuardBanner />
+      </div>
 
       {/* Main Navigation Header */}
-      <Navbar
-        currentTab={currentTab}
-        onTabChange={setCurrentTab}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
-        onOpenScanKK={() => setIsScanKKOpen(true)}
-        onOpenWebHosting={() => setIsPosterModalOpen(true)}
-      />
+      <div className="relative z-20">
+        <Navbar
+          currentTab={currentTab}
+          onTabChange={setCurrentTab}
+          onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          onOpenScanKK={() => setIsScanKKOpen(true)}
+          onOpenWebHosting={() => setIsPosterModalOpen(true)}
+          onOpenKirimEmail={() => setIsGmailModalOpen(true)}
+        />
+      </div>
 
       {/* Main Body Content Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 relative z-10">
         {/* Render Tab Views according to Role & Active Tab */}
         {isAdmin ? (
           <>
@@ -152,6 +163,11 @@ function AppContent() {
       <WebHostingPosterModal
         isOpen={isPosterModalOpen}
         onClose={() => setIsPosterModalOpen(false)}
+      />
+      <KirimEmailGmailModal
+        isOpen={isGmailModalOpen}
+        onClose={() => setIsGmailModalOpen(false)}
+        category="umum"
       />
 
       {/* Footer */}

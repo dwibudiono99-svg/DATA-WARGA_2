@@ -30,6 +30,8 @@ import {
   downloadBackupFromGoogleDrive,
   deleteBackupFromGoogleDrive,
 } from '../../services/googleDriveService';
+import { createRTGoogleSpreadsheet } from '../../services/googleSheetsService';
+import { Table, FileSpreadsheet } from 'lucide-react';
 
 interface GoogleDriveBackupPanelProps {
   onSuccessRestored?: () => void;
@@ -53,6 +55,8 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
   const [isUploading, setIsUploading] = useState(false);
   const [isRestoringId, setIsRestoringId] = useState<string | null>(null);
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [isExportingSheets, setIsExportingSheets] = useState(false);
+  const [lastCreatedSheetsUrl, setLastCreatedSheetsUrl] = useState<string | null>(null);
 
   // Status & notifications
   const [statusMessage, setStatusMessage] = useState<{
@@ -182,6 +186,52 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
     }
   };
 
+  // Export database to Google Sheets
+  const handleExportToGoogleSheets = async () => {
+    if (!accessToken) {
+      handleConnectGoogle();
+      return;
+    }
+
+    setIsExportingSheets(true);
+    setStatusMessage(null);
+    try {
+      const sheetTitle = `Buku Administrasi & Kas RT ${infoPerumahan.rtRw}`;
+      const result = await createRTGoogleSpreadsheet(
+        accessToken,
+        sheetTitle,
+        wargaList,
+        iuranList,
+        suratList,
+        infoPerumahan.namaPerumahan,
+        infoPerumahan.rtRw
+      );
+
+      setLastCreatedSheetsUrl(result.spreadsheetUrl);
+      setStatusMessage({
+        type: 'success',
+        text: `Berhasil mengekspor data ke Google Sheets! Dokumen baru siap dibuka.`,
+      });
+
+      logAudit(
+        'GSHEETS_EXPORT',
+        'Google Sheets',
+        'success',
+        `Membuat spreadsheet baru Google Sheets (${wargaList.length} warga, ${iuranList.length} iuran, ${suratList.length} surat).`
+      );
+
+      // Also refresh files list so it appears in Drive list
+      loadFiles(accessToken);
+    } catch (err: any) {
+      setStatusMessage({
+        type: 'error',
+        text: 'Gagal mengekspor ke Google Sheets: ' + (err?.message || err),
+      });
+    } finally {
+      setIsExportingSheets(false);
+    }
+  };
+
   // Restore snapshot from Google Drive file
   const handleRestoreFile = async (file: GoogleDriveFileItem) => {
     if (!accessToken) return;
@@ -305,9 +355,9 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
               <button
                 type="button"
                 onClick={handleConnectGoogle}
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-md shadow-blue-600/20 cursor-pointer"
+                className="btn-3d btn-3d-blue text-xs px-4 py-2"
               >
-                <Cloud className="w-4 h-4 text-white" />
+                <Cloud className="w-4 h-4 text-white mr-1.5" />
                 <span>Hubungkan: {targetAccountEmail}</span>
               </button>
             </div>
@@ -388,29 +438,66 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
             </div>
           </div>
 
-          <div className="space-y-2 pt-2">
+          <div className="space-y-2.5 pt-2 border-t border-blue-100">
             <button
               type="button"
               disabled={isUploading}
               onClick={handleUploadBackup}
-              className={`w-full py-3 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all shadow-md ${
+              className={`w-full text-xs px-4 py-2.5 ${
                 isUploading
-                  ? 'bg-blue-400 text-white cursor-wait'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/25 cursor-pointer'
+                  ? 'btn-3d bg-blue-300 text-white cursor-wait'
+                  : 'btn-3d btn-3d-blue'
               }`}
             >
               {isUploading ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Mengunggah ke Drive...</span>
+                  <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                  <span>Mengunggah Snapshot ke Drive...</span>
                 </>
               ) : (
                 <>
-                  <CloudUpload className="w-4 h-4" />
-                  <span>Unggah Snapshot ke Drive Sekarang</span>
+                  <CloudUpload className="w-4 h-4 mr-2" />
+                  <span>Unggah Snapshot Backup (.json)</span>
                 </>
               )}
             </button>
+
+            {/* Google Sheets Sync Button */}
+            <button
+              type="button"
+              disabled={isExportingSheets}
+              onClick={handleExportToGoogleSheets}
+              className={`w-full text-xs px-4 py-2.5 ${
+                isExportingSheets
+                  ? 'btn-3d bg-emerald-300 text-white cursor-wait'
+                  : 'btn-3d btn-3d-emerald'
+              }`}
+            >
+              {isExportingSheets ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                  <span>Menyiapkan Google Sheets...</span>
+                </>
+              ) : (
+                <>
+                  <Table className="w-4 h-4 mr-2" />
+                  <span>Ekspor ke Google Sheets (Spreadsheet)</span>
+                </>
+              )}
+            </button>
+
+            {lastCreatedSheetsUrl && (
+              <a
+                href={lastCreatedSheetsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full btn-3d btn-3d-white text-[11px] px-3 py-2 text-emerald-800"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-emerald-600 mr-1.5" />
+                <span>Buka Google Sheets di Tab Baru &rarr;</span>
+              </a>
+            )}
+
             <p className="text-[10px] text-slate-400 text-center">
               Berkas akan tersimpan di akun Google Drive pribadi Anda dengan enkripsi resmi Google.
             </p>
@@ -520,14 +607,20 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
                     })
                   : 'Waktu tidak diketahui';
 
+                const isSheet = file.mimeType?.includes('spreadsheet') || file.name?.includes('Spreadsheet') || file.name?.includes('Buku Administrasi');
+
                 return (
                   <div
                     key={file.id}
                     className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-indigo-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs"
                   >
                     <div className="flex items-start gap-3 min-w-0">
-                      <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 shrink-0 mt-0.5">
-                        <FileCode className="w-5 h-5 text-indigo-600" />
+                      <div className={`p-2 rounded-xl shrink-0 mt-0.5 ${isSheet ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700'}`}>
+                        {isSheet ? (
+                          <Table className="w-5 h-5 text-emerald-600" />
+                        ) : (
+                          <FileCode className="w-5 h-5 text-indigo-600" />
+                        )}
                       </div>
                       <div className="min-w-0 space-y-0.5">
                         <h5 className="font-bold text-xs text-slate-900 truncate" title={file.name}>
@@ -541,8 +634,8 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
                           {file.size && (
                             <span>• {(Number(file.size) / 1024).toFixed(1)} KB</span>
                           )}
-                          <span className="px-1.5 py-0.2 bg-emerald-50 text-emerald-700 font-bold rounded">
-                            Google Cloud
+                          <span className={`px-1.5 py-0.2 font-bold rounded ${isSheet ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-50 text-blue-700'}`}>
+                            {isSheet ? 'Google Sheets' : 'Google Drive Backup'}
                           </span>
                         </div>
                       </div>
@@ -550,36 +643,48 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
 
                     {/* Actions: Restore & Delete */}
                     <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                      <button
-                        type="button"
-                        disabled={isRestoring || isDeleting}
-                        onClick={() => handleRestoreFile(file)}
-                        className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
-                          isRestoring
-                            ? 'bg-indigo-300 text-white cursor-wait'
-                            : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs shadow-indigo-600/20'
-                        }`}
-                        title="Pulihkan data dari berkas ini"
-                      >
-                        {isRestoring ? (
-                          <>
-                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                            <span>Memulihkan...</span>
-                          </>
-                        ) : (
-                          <>
-                            <CloudDownload className="w-3.5 h-3.5" />
-                            <span>Pulihkan (Restore)</span>
-                          </>
-                        )}
-                      </button>
+                      {isSheet ? (
+                        <a
+                          href={`https://docs.google.com/spreadsheets/d/${file.id}/edit`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-xs cursor-pointer"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          <span>Buka Sheets</span>
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={isRestoring || isDeleting}
+                          onClick={() => handleRestoreFile(file)}
+                          className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+                            isRestoring
+                              ? 'bg-indigo-300 text-white cursor-wait'
+                              : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs shadow-indigo-600/20'
+                          }`}
+                          title="Pulihkan data dari berkas ini"
+                        >
+                          {isRestoring ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              <span>Memulihkan...</span>
+                            </>
+                          ) : (
+                            <>
+                              <CloudDownload className="w-3.5 h-3.5" />
+                              <span>Pulihkan (Restore)</span>
+                            </>
+                          )}
+                        </button>
+                      )}
 
                       <button
                         type="button"
                         disabled={isRestoring || isDeleting}
                         onClick={() => handleDeleteFile(file)}
                         className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                        title="Hapus cadangan ini dari Google Drive"
+                        title="Hapus berkas ini dari Google Drive"
                       >
                         {isDeleting ? (
                           <RefreshCw className="w-4 h-4 animate-spin text-rose-500" />

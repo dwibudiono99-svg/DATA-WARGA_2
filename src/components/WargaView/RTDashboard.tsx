@@ -30,6 +30,7 @@ import { WebHostingBanner } from '../WebHostingBanner';
 import { EditKopRTModal } from '../EditKopRTModal';
 import { JenisSuratManagerModal } from '../JenisSuratManagerModal';
 import { IuranStatistikChart } from '../IuranStatistikChart';
+import { RTMonthlyIuranBarChart } from './RTMonthlyIuranBarChart';
 
 interface RTDashboardProps {
   onNavigateTab: (tab: string) => void;
@@ -106,32 +107,32 @@ export const RTDashboard: React.FC<RTDashboardProps> = ({
           <button
             type="button"
             onClick={() => setIsEditKopOpen(true)}
-            className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="btn-3d btn-3d-white text-xs px-3.5 py-2"
             title="Edit KOP Surat Resmi RT"
           >
-            <Building2 className="w-4 h-4 text-emerald-700" />
+            <Building2 className="w-4 h-4 text-emerald-600 mr-1.5" />
             <span>Edit KOP RT</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsJenisSuratOpen(true)}
-            className="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="btn-3d btn-3d-white text-xs px-3.5 py-2"
             title="Kelola & Edit Jenis Surat"
           >
-            <Sliders className="w-4 h-4 text-indigo-600" />
+            <Sliders className="w-4 h-4 text-indigo-600 mr-1.5" />
             <span>Kelola Jenis Surat ({jenisSuratList.length})</span>
           </button>
 
           <button
             type="button"
             onClick={() => onNavigateTab('keamanan')}
-            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-md shadow-slate-900/10"
+            className="btn-3d btn-3d-dark text-xs px-3.5 py-2"
             title="Data & Kontak Petugas Keamanan"
           >
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-emerald-400 mr-1.5" />
             <span>Petugas Keamanan</span>
-            <span className="ml-1 px-1.5 py-0.2 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full">
+            <span className="ml-1.5 px-1.5 py-0.2 bg-emerald-500 text-slate-950 font-black text-[10px] rounded-full">
               {satpamBertugas.length} Siaga
             </span>
           </button>
@@ -139,10 +140,10 @@ export const RTDashboard: React.FC<RTDashboardProps> = ({
           <button
             type="button"
             onClick={() => onNavigateTab('pelaporan')}
-            className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-md shadow-indigo-600/20"
+            className="btn-3d btn-3d-indigo text-xs px-3.5 py-2"
             title="Pusat Pelaporan, Rekap Ekspor & Backup"
           >
-            <FileSpreadsheet className="w-4 h-4 text-blue-200" />
+            <FileSpreadsheet className="w-4 h-4 mr-1.5" />
             <span>Pelaporan & Backup</span>
           </button>
         </div>
@@ -167,16 +168,16 @@ export const RTDashboard: React.FC<RTDashboardProps> = ({
           <div className="flex flex-wrap sm:flex-nowrap gap-3 shrink-0">
             <button
               onClick={onOpenScanKK}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-2xl font-extrabold text-xs transition-all shadow-lg shadow-emerald-900/30 hover:scale-102 cursor-pointer"
+              className="btn-3d btn-3d-emerald text-xs px-4 py-2.5"
             >
-              <Sparkles className="w-4 h-4 text-amber-300 animate-spin" />
+              <Sparkles className="w-4 h-4 mr-2 text-amber-200" />
               <span>Pindai KK dengan AI</span>
             </button>
             <button
               onClick={onOpenTambahWarga}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-semibold text-xs transition-all shadow-md shadow-indigo-600/30"
+              className="btn-3d btn-3d-indigo text-xs px-4 py-2.5"
             >
-              <PlusCircle className="w-4 h-4" />
+              <PlusCircle className="w-4 h-4 mr-1.5" />
               <span>Tambah Warga Manual</span>
             </button>
           </div>
@@ -202,9 +203,9 @@ export const RTDashboard: React.FC<RTDashboardProps> = ({
 
         <button
           onClick={onOpenScanKK}
-          className="z-10 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-black rounded-2xl text-xs flex items-center gap-2.5 shadow-xl shadow-emerald-500/25 transition-all hover:scale-105 shrink-0 cursor-pointer"
+          className="btn-3d btn-3d-emerald text-xs px-6 py-3.5 z-10 shrink-0"
         >
-          <Camera className="w-4 h-4 text-slate-950" />
+          <Camera className="w-4 h-4 mr-2 text-white" />
           <span>Buka Pemindai Kamera KK AI &rarr;</span>
         </button>
 
@@ -236,9 +237,9 @@ export const RTDashboard: React.FC<RTDashboardProps> = ({
         <button
           type="button"
           onClick={() => onNavigateTab('pelaporan')}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-colors shrink-0 shadow-md shadow-blue-900/40 cursor-pointer"
+          className="btn-3d btn-3d-blue text-xs px-4 py-2 shrink-0"
         >
-          <Database className="w-3.5 h-3.5" />
+          <Database className="w-3.5 h-3.5 mr-1.5" />
           <span>Buka Fasilitas Backup & Restore &rarr;</span>
         </button>
       </div>
@@ -380,7 +381,10 @@ export const RTDashboard: React.FC<RTDashboardProps> = ({
         </div>
       </div>
 
-      {/* 5. Statistik Iuran Warga (Recharts) */}
+      {/* 5. Statistik Realisasi Iuran Bulanan (Recharts Bar Chart) */}
+      <RTMonthlyIuranBarChart onNavigateIuran={() => onNavigateTab('iuran')} />
+
+      {/* 6. Statistik & Partisipasi Iuran Warga Per Periode (Donat & Rincian) */}
       <IuranStatistikChart
         variant="admin"
         onNavigateIuran={() => onNavigateTab('iuran')}

@@ -14,12 +14,15 @@ import {
   Shield,
   Building2,
   Lock,
+  Mail,
 } from 'lucide-react';
 import { IuranItem, StatusBayar } from '../../types/rbac';
+import { KirimEmailGmailModal } from '../KirimEmailGmailModal';
 
 export const IuranManagement: React.FC = () => {
   const {
     iuranList,
+    wargaList,
     currentUser,
     bayarIuranSendiri,
     verifikasiIuran,
@@ -31,6 +34,18 @@ export const IuranManagement: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | StatusBayar>('all');
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const [selectedIuranToPay, setSelectedIuranToPay] = useState<IuranItem | null>(null);
+
+  const [emailModalState, setEmailModalState] = useState<{
+    isOpen: boolean;
+    recipient: string;
+    subject: string;
+    bodyHtml: string;
+  }>({
+    isOpen: false,
+    recipient: '',
+    subject: '',
+    bodyHtml: '',
+  });
 
   const [metodeBayar, setMetodeBayar] = useState<'QRIS' | 'Transfer Bank' | 'Tunai'>('QRIS');
   const [buktiRef, setBuktiRef] = useState('');
@@ -273,7 +288,7 @@ export const IuranManagement: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleOpenPayModal(item)}
-                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[11px] transition-colors"
+                            className="btn-3d btn-3d-emerald text-[11px] px-3 py-1"
                           >
                             Bayar
                           </button>
@@ -300,18 +315,47 @@ export const IuranManagement: React.FC = () => {
                         )}
 
                         {item.statusBayar === 'Lunas' && (
-                          <button
-                            type="button"
-                            onClick={() => handleVerifyClick(item, 'Belum Bayar')}
-                            className={`p-1.5 rounded-lg transition-colors ${
-                              isAdmin
-                                ? 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'
-                                : 'text-slate-300 hover:text-rose-600 hover:bg-rose-50'
-                            }`}
-                            title={isAdmin ? 'Ubah ke Belum Bayar' : 'Ubah Status (Khusus RT - Tes 403)'}
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const matchingWarga = wargaList.find((w) => w.namaLengkap === item.namaWarga || (w.blokRumah === item.blokRumah && w.nomorRumah === item.nomorRumah));
+                                const recipientEmail = matchingWarga?.email || '';
+                                setEmailModalState({
+                                  isOpen: true,
+                                  recipient: recipientEmail,
+                                  subject: `[Kuitansi Resmi RT ${infoPerumahan.rtRw}] Iuran ${item.jenisIuran} Periode ${item.periodeBulan} Lunas`,
+                                  bodyHtml: `<p>Yth. Bapak/Ibu <strong>${item.namaWarga}</strong>,</p>
+<p>Terima kasih, pembayaran iuran lingkungan untuk tempat tinggal Anda di <strong>${item.blokRumah} No. ${item.nomorRumah}</strong> telah <strong>LUNAS</strong> dan tercatat resmi pada pembukuan kas RT.</p>
+<ul>
+  <li>Periode: <strong>${item.periodeBulan}</strong></li>
+  <li>Jenis Tagihan: <strong>${item.jenisIuran}</strong></li>
+  <li>Jumlah Dibayar: <strong>Rp ${item.nominal.toLocaleString('id-ID')}</strong></li>
+  <li>Metode: <strong>${item.metodePembayaran || 'Transfer Bank'}</strong></li>
+  <li>Tanggal Verifikasi: <strong>${item.tanggalBayar || 'Terkonfirmasi'}</strong></li>
+</ul>
+<p>Salam hormat dan terima kasih atas dukungannya,<br/>Bendahara & Pengurus RT ${infoPerumahan.rtRw} - ${infoPerumahan.namaPerumahan}</p>`,
+                                });
+                              }}
+                              className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors"
+                              title="Kirim Kuitansi Pelunasan via Gmail ke Warga"
+                            >
+                              <Mail className="w-4 h-4" />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleVerifyClick(item, 'Belum Bayar')}
+                              className={`p-1.5 rounded-lg transition-colors ${
+                                isAdmin
+                                  ? 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'
+                                  : 'text-slate-300 hover:text-rose-600 hover:bg-rose-50'
+                              }`}
+                              title={isAdmin ? 'Ubah ke Belum Bayar' : 'Ubah Status (Khusus RT - Tes 403)'}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </>
                         )}
                       </div>
                     </td>
@@ -427,17 +471,17 @@ export const IuranManagement: React.FC = () => {
                 />
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              <div className="pt-2 flex justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsPayModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-xl text-slate-700 font-medium hover:bg-slate-50"
+                  className="btn-3d btn-3d-white text-xs px-4 py-2"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-xs"
+                  className="btn-3d btn-3d-emerald text-xs px-4 py-2"
                 >
                   Konfirmasi Pembayaran
                 </button>
@@ -446,6 +490,16 @@ export const IuranManagement: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Gmail Modal for Dues Receipt */}
+      <KirimEmailGmailModal
+        isOpen={emailModalState.isOpen}
+        onClose={() => setEmailModalState((prev) => ({ ...prev, isOpen: false }))}
+        defaultRecipient={emailModalState.recipient}
+        defaultSubject={emailModalState.subject}
+        defaultBodyHtml={emailModalState.bodyHtml}
+        category="iuran"
+      />
     </div>
   );
 };

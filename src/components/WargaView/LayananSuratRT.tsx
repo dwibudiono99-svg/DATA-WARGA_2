@@ -25,10 +25,12 @@ import {
   CheckCheck,
   ChevronRight,
   Info,
+  Mail,
 } from 'lucide-react';
 import { SuratItem } from '../../types/rbac';
 import { EditKopRTModal } from '../EditKopRTModal';
 import { JenisSuratManagerModal } from '../JenisSuratManagerModal';
+import { KirimEmailGmailModal } from '../KirimEmailGmailModal';
 
 export const LayananSuratRT: React.FC = () => {
   const {
@@ -48,6 +50,17 @@ export const LayananSuratRT: React.FC = () => {
   const [isJenisSuratModalOpen, setIsJenisSuratModalOpen] = useState(false);
   const [viewingLetter, setViewingLetter] = useState<SuratItem | null>(null);
   const [selectedAIReviewSurat, setSelectedAIReviewSurat] = useState<SuratItem | null>(null);
+  const [emailModalState, setEmailModalState] = useState<{
+    isOpen: boolean;
+    recipient: string;
+    subject: string;
+    bodyHtml: string;
+  }>({
+    isOpen: false,
+    recipient: '',
+    subject: '',
+    bodyHtml: '',
+  });
 
   // Form states for new application
   const [selectedJenisSuratId, setSelectedJenisSuratId] = useState(jenisSuratList[0]?.nama || 'Surat Keterangan Domisili');
@@ -156,30 +169,30 @@ export const LayananSuratRT: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsKopModalOpen(true)}
-                className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-300"
+                className="btn-3d btn-3d-white text-xs px-3.5 py-2.5"
                 title="Edit KOP Surat Resmi RT"
               >
-                <Building2 className="w-4 h-4 text-emerald-600" />
+                <Building2 className="w-4 h-4 text-emerald-600 mr-1.5" />
                 <span>Edit KOP RT</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setIsJenisSuratModalOpen(true)}
-                className="px-3.5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-indigo-200"
+                className="btn-3d btn-3d-white text-xs px-3.5 py-2.5"
                 title="Kelola Jenis & Syarat Template Surat"
               >
-                <Sliders className="w-4 h-4 text-indigo-600" />
+                <Sliders className="w-4 h-4 text-indigo-600 mr-1.5" />
                 <span>Kelola Jenis Surat</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setIsKopModalOpen(true)}
-                className="px-3.5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-amber-200"
+                className="btn-3d btn-3d-amber text-xs px-3.5 py-2.5"
                 title="Atur Tata Naskah & Format Aturan Persuratan RT"
               >
-                <FileText className="w-4 h-4 text-amber-600" />
+                <FileText className="w-4 h-4 mr-1.5" />
                 <span>Atur Format Surat</span>
               </button>
             </>
@@ -188,9 +201,9 @@ export const LayananSuratRT: React.FC = () => {
           <button
             type="button"
             onClick={handleOpenApplyModal}
-            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-md shadow-indigo-700/20 cursor-pointer"
+            className="btn-3d btn-3d-indigo text-xs px-5 py-2.5"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 mr-1.5" />
             <span>Ajukan Surat Baru</span>
           </button>
         </div>
@@ -431,15 +444,40 @@ export const LayananSuratRT: React.FC = () => {
 
                   {/* View / Print letterhead button */}
                   {isApproved && (
-                    <button
-                      type="button"
-                      onClick={() => setViewingLetter(surat)}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
-                      title="Lihat Format Kertas Kop Surat Resmi RT"
-                    >
-                      <Printer className="w-3.5 h-3.5" />
-                      <span>Cetak Surat</span>
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const matchingWarga = wargaList.find((w) => w.nik === surat.nikPemohon || w.namaLengkap === surat.namaPemohon);
+                          const recipientEmail = matchingWarga?.email || '';
+                          setEmailModalState({
+                            isOpen: true,
+                            recipient: recipientEmail,
+                            subject: `[Resmi RT ${infoPerumahan.rtRw}] Pengesahan ${surat.jenisSurat} - No. ${surat.nomorSuratResmi || 'Terbit'}`,
+                            bodyHtml: `<p>Yth. Bapak/Ibu <strong>${surat.namaPemohon}</strong>,</p>
+<p>Surat permohonan <strong>${surat.jenisSurat}</strong> untuk keperluan: <em>"${surat.keperluan}"</em> telah disahkan oleh Ketua RT ${infoPerumahan.rtRw}.</p>
+<p>Nomor Surat Resmi: <strong>${surat.nomorSuratResmi || 'Terbit'}</strong></p>
+<p>Anda dapat mengunduh atau mencetak berkas surat digital melalui portal web resmi RT.</p>
+<p>Salam hangat,<br/>Pengurus RT ${infoPerumahan.rtRw} - ${infoPerumahan.namaPerumahan}</p>`,
+                          });
+                        }}
+                        className="btn-3d btn-3d-rose text-[11px] px-2.5 py-1.5"
+                        title="Kirim Berkas / Pemberitahuan via Gmail ke Pemohon"
+                      >
+                        <Mail className="w-3.5 h-3.5 mr-1" />
+                        <span>Kirim Gmail</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setViewingLetter(surat)}
+                        className="btn-3d btn-3d-emerald text-[11px] px-3 py-1.5"
+                        title="Lihat Format Kertas Kop Surat Resmi RT"
+                      >
+                        <Printer className="w-3.5 h-3.5 mr-1" />
+                        <span>Cetak Surat</span>
+                      </button>
+                    </>
                   )}
 
                   {/* Admin Approval Buttons */}
@@ -1056,6 +1094,16 @@ export const LayananSuratRT: React.FC = () => {
       {/* Global Modals for KOP & Jenis Surat */}
       <EditKopRTModal isOpen={isKopModalOpen} onClose={() => setIsKopModalOpen(false)} />
       <JenisSuratManagerModal isOpen={isJenisSuratModalOpen} onClose={() => setIsJenisSuratModalOpen(false)} />
+
+      {/* Gmail Email Sender Modal */}
+      <KirimEmailGmailModal
+        isOpen={emailModalState.isOpen}
+        onClose={() => setEmailModalState((prev) => ({ ...prev, isOpen: false }))}
+        defaultRecipient={emailModalState.recipient}
+        defaultSubject={emailModalState.subject}
+        defaultBodyHtml={emailModalState.bodyHtml}
+        category="surat"
+      />
     </div>
   );
 };
