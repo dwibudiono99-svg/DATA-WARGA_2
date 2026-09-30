@@ -95,7 +95,7 @@ export function loadGisScript(): Promise<void> {
  * Note: If no custom client ID is injected, we provide a clean, helpful fallback
  * that explains and supports user input or direct demo connection.
  */
-export async function requestDriveAccessToken(customClientId?: string): Promise<string> {
+export async function requestDriveAccessToken(customClientId?: string, loginHint?: string): Promise<string> {
   await loadGisScript();
 
   const clientId =
@@ -120,6 +120,7 @@ export async function requestDriveAccessToken(customClientId?: string): Promise<
       const client = google.accounts.oauth2.initTokenClient({
         client_id: clientId,
         scope: DRIVE_FILE_SCOPE,
+        hint: loginHint || undefined,
         callback: (response: any) => {
           if (response.error) {
             return reject(new Error(response.error_description || response.error));
@@ -133,7 +134,9 @@ export async function requestDriveAccessToken(customClientId?: string): Promise<
         },
       });
 
-      client.requestAccessToken();
+      client.requestAccessToken({
+        hint: loginHint || undefined,
+      });
     } catch (err: any) {
       reject(err);
     }

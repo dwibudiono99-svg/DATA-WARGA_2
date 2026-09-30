@@ -63,6 +63,9 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
   // Restore mode
   const [restoreMode, setRestoreMode] = useState<'replace' | 'merge'>('replace');
 
+  // Target Google Account Email
+  const [targetAccountEmail, setTargetAccountEmail] = useState<string>('wahyubudiono69@gmail.com');
+
   // Custom Client ID modal / state
   const [customClientId, setCustomClientId] = useState<string>(() => {
     return localStorage.getItem('sim_warga_google_client_id') || '';
@@ -106,11 +109,11 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
   const handleConnectGoogle = async () => {
     setStatusMessage(null);
     try {
-      const token = await requestDriveAccessToken(customClientId.trim());
+      const token = await requestDriveAccessToken(customClientId.trim(), targetAccountEmail.trim());
       setAccessToken(token);
       setStatusMessage({
         type: 'success',
-        text: 'Berhasil terhubung dengan Google Drive! Memuat daftar cadangan...',
+        text: `Berhasil terhubung dengan Google Drive (${targetAccountEmail})! Memuat daftar berkas cadangan...`,
       });
       loadFiles(token);
     } catch (err: any) {
@@ -280,12 +283,12 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
         </div>
 
         {/* Action button: Connect / Disconnect */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           {accessToken ? (
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Terhubung ke Drive</span>
+                <span>Terhubung: {targetAccountEmail}</span>
               </span>
               <button
                 type="button"
@@ -298,14 +301,16 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
               </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={handleConnectGoogle}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-md shadow-blue-600/20 cursor-pointer"
-            >
-              <Cloud className="w-4 h-4 text-white" />
-              <span>Hubungkan Akun Google Drive</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleConnectGoogle}
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-md shadow-blue-600/20 cursor-pointer"
+              >
+                <Cloud className="w-4 h-4 text-white" />
+                <span>Hubungkan: {targetAccountEmail}</span>
+              </button>
+            </div>
           )}
 
           <button
@@ -484,7 +489,7 @@ export const GoogleDriveBackupPanel: React.FC<GoogleDriveBackupPanelProps> = ({ 
                 className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold inline-flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
               >
                 <Cloud className="w-4 h-4" />
-                <span>Masuk & Hubungkan Google Drive</span>
+                <span>Masuk & Hubungkan Google Drive ({targetAccountEmail})</span>
               </button>
             </div>
           ) : isLoadingList ? (

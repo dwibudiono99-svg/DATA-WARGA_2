@@ -28,9 +28,9 @@ export const WebHostingPosterModal: React.FC<WebHostingPosterModalProps> = ({
   const defaultHostingUrl =
     typeof window !== 'undefined'
       ? (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1'))
-        ? 'https://ais-pre-77zpadwefwxzehalu26qkm-513616529310.asia-east1.run.app'
+        ? 'https://ais-pre-h4e4r5jitlosrzxrrppull-513616529310.asia-east1.run.app'
         : window.location.origin
-      : 'https://ais-pre-77zpadwefwxzehalu26qkm-513616529310.asia-east1.run.app';
+      : 'https://ais-pre-h4e4r5jitlosrzxrrppull-513616529310.asia-east1.run.app';
 
   useEffect(() => {
     QRCode.toDataURL(defaultHostingUrl, {
